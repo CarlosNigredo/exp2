@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data from csv to json</title>
+</head>
+<body>
+    <input type="file" id="uploadfile" accept=".csv">
+    <button id="uploadconfirm">Upload File</button>
+    <div id="text"></div>
+
+
+    <script src='https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js'></script>
+
+    <script>
+        var datosCompletos = {
+            pesoBajo: [],
+            pesoMedio: [],
+            pesoAlto: [],
+
+            anchoBajo: [],
+            anchoMedio: [],
+            anchoAlto: [],
+
+            obDerBajo: [],
+            obDerMedio: [],
+            obDerAlto: [],
+
+            obIzqBajo: [],
+            obIzqMedio: [],
+            obIzqAlto: []
+        }     
+        
+        var pseSet = [];
+
+        const variables = ['peso', 'ancho', 'oblicuacion', 'oblicuacion_izquierda'];
+        const puntos = ['pesoBajo','pesoMedio','pesoAlto','anchoBajo','anchoMedio','anchoAlto','obDerBajo','obDerMedio','obDerAlto','obIzqBajo','obIzqMedio','obIzqAlto']
+        const uploadconfirm = document.getElementById('uploadconfirm').addEventListener('click', () => {
+            Papa.parse(document.getElementById('uploadfile').files[0],
+            {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results){
+                    // console.log(results);
+                    for(i=0; i<results.data.length; i++){
+                        switch(results.data[i].variableBloque){
+                            case(variables[0]):
+                                if(results.data[i].puntoFuncion==="bajo"){
+                                    datosCompletos['pesoBajo'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="medio"){
+                                    datosCompletos['pesoMedio'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="alto"){
+                                    datosCompletos['pesoAlto'].push(results.data[i]);
+                                }
+                                break;
+                            case(variables[1]):
+                                if(results.data[i].puntoFuncion==="bajo"){
+                                    datosCompletos['anchoBajo'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="medio"){
+                                    datosCompletos['anchoMedio'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="alto"){
+                                    datosCompletos['anchoAlto'].push(results.data[i]);
+                                }
+                                break;
+                            case(variables[2]):
+                                if(results.data[i].puntoFuncion==="bajo"){
+                                    datosCompletos['obDerBajo'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="medio"){
+                                    datosCompletos['obDerMedio'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="alto"){
+                                    datosCompletos['obDerAlto'].push(results.data[i]);
+                                }
+                                break;
+                            case(variables[3]):
+                                if(results.data[i].puntoFuncion==="bajo"){
+                                    datosCompletos['obIzqBajo'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="medio"){
+                                    datosCompletos['obIzqMedio'].push(results.data[i]);
+                                } else if (results.data[i].puntoFuncion==="alto"){
+                                    datosCompletos['obIzqAlto'].push(results.data[i]);
+                                }
+                                break;
+                        }
+
+                    }
+
+                    const getValue = function(variable) {
+                        let pse = datosCompletos[variable][datosCompletos[variable].length-1]['igualdadSubjetiva'];
+                        console.log(pse);
+                        return pse;
+                    }
+
+                    for(i=0; i<puntos.length; i++){
+                        pseSet.push(getValue(puntos[i]));
+                    }
+
+                    var string = [];
+
+                    for(i=0; i<pseSet.length; i++){
+                        let num = parseFloat(pseSet[i]);
+                        string.push(num);
+                    }             
+
+                    
+                    var div = document.getElementById('text');
+        
+                    div.innerHTML += string;
+                }
+            })
+            pseSet = [];
+        })        
+    </script>
+    
+</body>
+</html>
